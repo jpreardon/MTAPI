@@ -27,11 +27,12 @@ class Mtapi(object):
         def __getitem__(self, key):
             return self.json[key]
 
-        def add_train(self, route_id, direction, train_time, feed_time):
+        def add_train(self, route_id, direction, train_time, feed_time, destination):
             self.routes.add(route_id)
             self.trains[direction].append({
                 'route': route_id,
-                'time': train_time
+                'time': train_time,
+                'destination': destination
             })
             self.last_update = feed_time
 
@@ -158,13 +159,25 @@ class Mtapi(object):
                         continue
 
                     station_id = self._stops_to_stations[stop_id]
+
+                    # Get the destination name for the train
+                    last_stop_update = (entity.trip_update.stop_time_update[-1])
+                    destination_stop_id = last_stop_update.stop_id[:-1]
+                    destination_station_id = (self._stops_to_stations.get(destination_stop_id))
+                    
+                    if destination_station_id:
+                        destination_name = (
+                            self._stations[destination_station_id]['name'])
+                    else:
+                        destination_name = None
+
                     stations[station_id].add_train(route_id,
                                                    direction,
                                                    trip_stop.time,
-                                                   mta_data.timestamp)
+                                                   mta_data.timestamp,
+                                                   destination_name)
 
                     routes[route_id].add(stop_id)
-
 
         # sort by time
         for id in stations:
