@@ -57,7 +57,7 @@ Standard Flask option. Will enabled enhanced logging and wildcard CORS headers.
 *default: False*
 
 - **SERVICE_ALERTS**
-Enable additional service alert information from the MTA's feed. 
+Enable additional service alert information from the MTA's feed.  
 *default: False*
 
 ## Generating a Stations File
