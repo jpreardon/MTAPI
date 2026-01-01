@@ -57,12 +57,13 @@ class Mtapi(object):
 
         def serialize(self):
             out = {
-                'service_alerts': self.alerts,
                 'N': self.trains['N'],
                 'S': self.trains['S'],
                 'routes': self.routes,
                 'last_update': self.last_update
             }
+            if self.alerts:
+                out['service_alerts'] = self.alerts # Only add service alerts if they exist
             out.update(self.json)
             return out
 
@@ -141,9 +142,8 @@ class Mtapi(object):
         # Fall back to 'en' when language isn't available.
         # This is needed for elevator alerts, some text is 
         # better than no text in this case.
+        english_text = None
         for translation in entity.alert.header_text.translation:
-            english_text = None
-
             if translation.language == language:
                 return translation.text
             elif translation.language == 'en':
